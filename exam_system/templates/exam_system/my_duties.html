@@ -1,0 +1,39 @@
+{% extends 'exam_system/base.html' %}
+{% block title %}My Duties{% endblock %}
+{% block page_title %}My Invigilation Duties{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div><h2>My Invigilation Duties</h2><p>All your assigned exam invigilation duties</p></div>
+</div>
+<div class="card">
+    <div class="card-body p-0">
+        {% if duties %}
+        <table class="table mb-0">
+            <thead><tr><th>Subject</th><th>Exam Date</th><th>Reporting Time</th><th>Room</th><th>Building</th><th>Status</th><th>Notes</th></tr></thead>
+            <tbody>
+                {% for duty in duties %}
+                <tr>
+                    <td>
+                        <div style="font-weight:700;font-size:13px;">{{ duty.exam.subject_name }}</div>
+                        <div style="font-size:11px;color:#9ca3af;">{{ duty.exam.subject_code }} &middot; Sem {{ duty.exam.semester }}</div>
+                    </td>
+                    <td style="font-weight:600;font-size:13px;">{{ duty.duty_date }}</td>
+                    <td><span class="badge" style="background:#dbeafe;color:#1d4ed8;"><i class="bi bi-clock me-1"></i>{{ duty.reporting_time }}</span></td>
+                    <td><span class="badge" style="background:#ede9fe;color:#6d28d9;font-size:13px;">Room {{ duty.room.room_number }}</span></td>
+                    <td style="font-size:13px;">{{ duty.room.building }}</td>
+                    <td>
+                        {% if duty.status == 'assigned' %}<span class="badge badge-assigned px-2 py-1">Assigned</span>
+                        {% elif duty.status == 'confirmed' %}<span class="badge badge-confirmed px-2 py-1">Confirmed</span>
+                        {% else %}<span class="badge badge-completed px-2 py-1">Completed</span>{% endif %}
+                    </td>
+                    <td style="font-size:12px;color:#6b7280;">{{ duty.notes|default:"—" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state"><i class="bi bi-clipboard-x d-block"></i><h6>No duties assigned yet</h6><p style="font-size:13px;">Your administrator will assign duties before exams.</p></div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

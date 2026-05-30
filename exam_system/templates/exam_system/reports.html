@@ -1,0 +1,93 @@
+{% extends 'exam_system/base.html' %}
+{% block title %}Reports{% endblock %}
+{% block page_title %}Reports & Analytics{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div><h2>Reports & Analytics</h2><p>Overview of invigilation duty statistics</p></div>
+    <a href="{% url 'export_duties_csv' %}" class="btn btn-success"><i class="bi bi-download me-2"></i>Export CSV</a>
+</div>
+
+<!-- Summary Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="stat-card stat-purple">
+            <div class="stat-card-icon"><i class="bi bi-clipboard2-fill"></i></div>
+            <div><h3>{{ total_duties }}</h3><p>Total Duties</p></div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card stat-green">
+            <div class="stat-card-icon"><i class="bi bi-check-circle-fill"></i></div>
+            <div><h3>{{ completed }}</h3><p>Completed</p></div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card stat-peach">
+            <div class="stat-card-icon"><i class="bi bi-hourglass-split"></i></div>
+            <div><h3>{{ pending }}</h3><p>Pending</p></div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <!-- Faculty Duty Distribution -->
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header"><i class="bi bi-people-fill me-2" style="color:#6366f1"></i>Faculty Duty Distribution</div>
+            <div class="card-body p-0">
+                <table class="table mb-0">
+                    <thead><tr><th>Faculty</th><th>Department</th><th>Duties</th></tr></thead>
+                    <tbody>
+                        {% for f in faculty_stats %}
+                        <tr>
+                            <td>
+                                <div style="font-weight:700;font-size:13px;">{{ f.name }}</div>
+                                <div style="font-size:11px;color:#9ca3af;">{{ f.employee_id }}</div>
+                            </td>
+                            <td style="font-size:12px;">{{ f.department }}</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div style="height:8px;background:#ede9fe;border-radius:4px;flex:1;">
+                                        <div style="height:100%;background:#6366f1;border-radius:4px;width:{% if f.assigned %}{{ f.assigned|divisibleby:1|yesno:"100,0" }}%{% else %}0%{% endif %};min-width:{% if f.assigned %}20px{% else %}0{% endif %}"></div>
+                                    </div>
+                                    <span class="badge" style="background:#ede9fe;color:#6d28d9;">{{ f.assigned }}</span>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="3" class="text-center text-muted py-4">No data</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exam Duty Status -->
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header"><i class="bi bi-calendar2-check-fill me-2" style="color:#8b5cf6"></i>Exam-wise Duty Assignments</div>
+            <div class="card-body p-0">
+                <table class="table mb-0">
+                    <thead><tr><th>Subject</th><th>Code</th><th>Duties Assigned</th></tr></thead>
+                    <tbody>
+                        {% for exam in exam_stats %}
+                        <tr>
+                            <td>
+                                <div style="font-weight:700;font-size:13px;">{{ exam.subject_name }}</div>
+                                <div style="font-size:11px;color:#9ca3af;">{{ exam.exam_date }}</div>
+                            </td>
+                            <td><span class="badge" style="background:#dbeafe;color:#1d4ed8;">{{ exam.subject_code }}</span></td>
+                            <td><span class="badge" style="background:#d1fae5;color:#065f46;font-size:13px;padding:5px 10px;">{{ exam.assigned }}</span></td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="3" class="text-center text-muted py-4">No data</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

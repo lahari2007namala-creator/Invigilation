@@ -1,0 +1,79 @@
+{% extends 'exam_system/base.html' %}
+{% block title %}Invigilation Duties{% endblock %}
+{% block page_title %}Invigilation Duties{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div><h2>Invigilation Duties</h2><p>Manage and track all duty assignments</p></div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'auto_assign_duties' %}" class="btn btn-success"><i class="bi bi-magic me-2"></i>Auto Assign</a>
+        <a href="{% url 'duty_add' %}" class="btn btn-primary"><i class="bi bi-clipboard2-plus me-2"></i>Assign Duty</a>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-body py-2">
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-md-6">
+                <div class="search-box">
+                    <i class="bi bi-search"></i>
+                    <input type="text" name="q" class="form-control" placeholder="Search faculty or subject..." value="{{ search }}">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <select name="status" class="form-select">
+                    <option value="">All Status</option>
+                    <option value="assigned" {% if selected_status == 'assigned' %}selected{% endif %}>Assigned</option>
+                    <option value="confirmed" {% if selected_status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                    <option value="completed" {% if selected_status == 'completed' %}selected{% endif %}>Completed</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        {% if duties %}
+        <table class="table mb-0">
+            <thead>
+                <tr><th>Faculty</th><th>Exam</th><th>Date & Reporting</th><th>Room</th><th>Status</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                {% for duty in duties %}
+                <tr>
+                    <td>
+                        <div style="font-weight:700; font-size:13px;">{{ duty.faculty.name }}</div>
+                        <div style="font-size:11px; color:#9ca3af;">{{ duty.faculty.employee_id }} &middot; {{ duty.faculty.department }}</div>
+                    </td>
+                    <td>
+                        <div style="font-weight:600; font-size:13px;">{{ duty.exam.subject_name }}</div>
+                        <div style="font-size:11px; color:#9ca3af;">{{ duty.exam.subject_code }}</div>
+                    </td>
+                    <td>
+                        <div style="font-weight:600; font-size:13px;">{{ duty.duty_date }}</div>
+                        <div style="font-size:11px; color:#9ca3af;"><i class="bi bi-clock me-1"></i>{{ duty.reporting_time }}</div>
+                    </td>
+                    <td><span class="badge" style="background:#ede9fe;color:#6d28d9;">Room {{ duty.room.room_number }}</span></td>
+                    <td>
+                        {% if duty.status == 'assigned' %}<span class="badge badge-assigned px-2 py-1">Assigned</span>
+                        {% elif duty.status == 'confirmed' %}<span class="badge badge-confirmed px-2 py-1">Confirmed</span>
+                        {% else %}<span class="badge badge-completed px-2 py-1">Completed</span>{% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'duty_edit' duty.pk %}" class="btn btn-sm btn-warning me-1"><i class="bi bi-pencil"></i></a>
+                        <a href="{% url 'duty_delete' duty.pk %}" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state"><i class="bi bi-clipboard-x d-block"></i><h6>No duties found</h6></div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

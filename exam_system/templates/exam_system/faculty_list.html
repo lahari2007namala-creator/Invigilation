@@ -1,0 +1,92 @@
+{% extends 'exam_system/base.html' %}
+{% block title %}Faculty Management{% endblock %}
+{% block page_title %}Faculty Management{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Faculty Members</h2>
+        <p>Manage all faculty members and their availability</p>
+    </div>
+    <a href="{% url 'faculty_add' %}" class="btn btn-primary"><i class="bi bi-person-plus-fill me-2"></i>Add Faculty</a>
+</div>
+
+<div class="card mb-3">
+    <div class="card-body py-2">
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-md-6">
+                <div class="search-box">
+                    <i class="bi bi-search"></i>
+                    <input type="text" name="q" class="form-control" placeholder="Search by name, ID or email..." value="{{ search }}">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <select name="dept" class="form-select">
+                    <option value="">All Departments</option>
+                    {% for dept in departments %}
+                    <option value="{{ dept.id }}" {% if selected_dept == dept.id|stringformat:"s" %}selected{% endif %}>{{ dept.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        {% if faculty_list %}
+        <table class="table mb-0">
+            <thead>
+                <tr>
+                    <th>Employee</th>
+                    <th>Department</th>
+                    <th>Contact</th>
+                    <th>Duties</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for f in faculty_list %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="user-avatar" style="width:36px;height:36px;font-size:14px;border-radius:10px;background:linear-gradient(135deg,#6366f1,#8b5cf6);">{{ f.name|first|upper }}</div>
+                            <div>
+                                <div style="font-weight:700; font-size:14px;">{{ f.name }}</div>
+                                <div style="font-size:11px; color:#9ca3af;">{{ f.employee_id }} &middot; {{ f.designation }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ f.department }}</td>
+                    <td><div style="font-size:12px;">{{ f.email }}</div><div style="font-size:11px; color:#9ca3af;">{{ f.phone }}</div></td>
+                    <td><span class="badge" style="background:#ede9fe;color:#6d28d9;font-size:13px;padding:5px 10px;">{{ f.duty_count }}</span></td>
+                    <td>
+                        {% if f.is_available %}
+                        <span class="badge" style="background:#d1fae5;color:#065f46;">Available</span>
+                        {% else %}
+                        <span class="badge" style="background:#fee2e2;color:#991b1b;">Unavailable</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'faculty_detail' f.pk %}" class="btn btn-sm btn-outline-primary me-1"><i class="bi bi-eye"></i></a>
+                        <a href="{% url 'faculty_edit' f.pk %}" class="btn btn-sm btn-warning me-1"><i class="bi bi-pencil"></i></a>
+                        <a href="{% url 'faculty_delete' f.pk %}" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <i class="bi bi-people d-block"></i>
+            <h6>No faculty found</h6>
+            <p style="font-size:13px;">Try a different search or <a href="{% url 'faculty_add' %}">add a faculty member</a>.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

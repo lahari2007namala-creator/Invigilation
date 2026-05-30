@@ -1,0 +1,33 @@
+{% extends 'exam_system/base.html' %}
+{% block title %}Auto Assign Duties{% endblock %}
+{% block page_title %}Auto Assign Duties{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card" style="border-top:4px solid #6366f1;">
+            <div class="card-header"><i class="bi bi-magic me-2" style="color:#6366f1"></i>Auto Assign Invigilation Duties</div>
+            <div class="card-body p-4">
+                <div class="alert alert-info"><i class="bi bi-info-circle-fill me-2"></i>The system will automatically assign available faculty to rooms for the selected exam, prioritizing those with the fewest duties for fair distribution.</div>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label class="form-label">Select Exam</label>
+                        <select name="exam_id" class="form-select" required>
+                            <option value="">-- Choose an Exam --</option>
+                            {% for exam in exams %}
+                            <option value="{{ exam.pk }}">{{ exam.subject_name }} ({{ exam.subject_code }}) &ndash; {{ exam.exam_date }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 py-3" style="font-size:15px;font-weight:700;">
+                        <i class="bi bi-magic me-2"></i>Auto Assign Now
+                    </button>
+                </form>
+                {% if not exams %}
+                <div class="alert alert-warning mt-3"><i class="bi bi-exclamation-triangle me-2"></i>No upcoming exams found. <a href="{% url 'exam_add' %}">Schedule an exam</a> first.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

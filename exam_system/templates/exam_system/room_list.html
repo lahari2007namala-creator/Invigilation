@@ -1,0 +1,36 @@
+{% extends 'exam_system/base.html' %}
+{% block title %}Exam Rooms{% endblock %}
+{% block page_title %}Exam Rooms{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div><h2>Exam Rooms</h2><p>Manage examination halls and rooms</p></div>
+    <a href="{% url 'room_add' %}" class="btn btn-primary"><i class="bi bi-door-open me-2"></i>Add Room</a>
+</div>
+<div class="row g-3">
+    {% for room in rooms %}
+    <div class="col-md-4 col-sm-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div style="width:48px;height:48px;background:#ede9fe;border-radius:14px;display:flex;align-items:center;justify-content:center;">
+                        <i class="bi bi-door-open-fill" style="color:#6d28d9;font-size:20px;"></i>
+                    </div>
+                    <div class="d-flex gap-1">
+                        <a href="{% url 'room_edit' room.pk %}" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>
+                        <a href="{% url 'room_delete' room.pk %}" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></a>
+                    </div>
+                </div>
+                <h5 style="font-weight:800; color:#1e1b4b; margin:0;">Room {{ room.room_number }}</h5>
+                <p style="color:#9ca3af; font-size:12px; margin:3px 0 12px;">{{ room.building }} &middot; Floor {{ room.floor }}</p>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge" style="background:#dbeafe;color:#1d4ed8;font-size:12px;padding:5px 10px;"><i class="bi bi-people me-1"></i>Capacity: {{ room.capacity }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12"><div class="empty-state"><i class="bi bi-door-open d-block"></i><h6>No rooms added yet</h6></div></div>
+    {% endfor %}
+</div>
+{% endblock %}

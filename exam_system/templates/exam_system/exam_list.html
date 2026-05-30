@@ -1,0 +1,83 @@
+{% extends 'exam_system/base.html' %}
+{% block title %}Exam Schedule{% endblock %}
+{% block page_title %}Exam Schedule{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div><h2>Exam Schedule</h2><p>Manage and track all examination schedules</p></div>
+    <a href="{% url 'exam_add' %}" class="btn btn-primary"><i class="bi bi-calendar-plus me-2"></i>Schedule Exam</a>
+</div>
+
+<div class="card mb-3">
+    <div class="card-body py-2">
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-md-6">
+                <div class="search-box">
+                    <i class="bi bi-search"></i>
+                    <input type="text" name="q" class="form-control" placeholder="Search by subject name or code..." value="{{ search }}">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <select name="status" class="form-select">
+                    <option value="">All Status</option>
+                    <option value="upcoming" {% if selected_status == 'upcoming' %}selected{% endif %}>Upcoming</option>
+                    <option value="ongoing" {% if selected_status == 'ongoing' %}selected{% endif %}>Ongoing</option>
+                    <option value="completed" {% if selected_status == 'completed' %}selected{% endif %}>Completed</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        {% if exams %}
+        <table class="table mb-0">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Department / Semester</th>
+                    <th>Date & Time</th>
+                    <th>Students</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for exam in exams %}
+                <tr>
+                    <td>
+                        <div style="font-weight:700; font-size:14px;">{{ exam.subject_name }}</div>
+                        <div style="font-size:11px; color:#9ca3af;">{{ exam.subject_code }}</div>
+                    </td>
+                    <td>
+                        <div style="font-size:13px;">{{ exam.department }}</div>
+                        <div style="font-size:11px; color:#9ca3af;">Sem {{ exam.semester }}</div>
+                    </td>
+                    <td>
+                        <div style="font-weight:600; font-size:13px;">{{ exam.exam_date }}</div>
+                        <div style="font-size:11px; color:#9ca3af;">{{ exam.start_time }} – {{ exam.end_time }}</div>
+                    </td>
+                    <td><span class="badge" style="background:#dbeafe;color:#1d4ed8;">{{ exam.total_students }}</span></td>
+                    <td>
+                        {% if exam.status == 'upcoming' %}<span class="badge badge-upcoming px-2 py-1">Upcoming</span>
+                        {% elif exam.status == 'ongoing' %}<span class="badge badge-ongoing px-2 py-1">Ongoing</span>
+                        {% else %}<span class="badge badge-completed px-2 py-1">Completed</span>{% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'exam_edit' exam.pk %}" class="btn btn-sm btn-warning me-1"><i class="bi bi-pencil"></i></a>
+                        <a href="{% url 'exam_delete' exam.pk %}" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state"><i class="bi bi-calendar-x d-block"></i><h6>No exams found</h6></div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends 'exam_system/base.html' %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Stat Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-6">
+        <div class="stat-card stat-purple">
+            <div class="stat-card-icon"><i class="bi bi-people-fill"></i></div>
+            <div>
+                <h3>{{ total_faculty }}</h3>
+                <p>Total Faculty</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card stat-blue">
+            <div class="stat-card-icon"><i class="bi bi-calendar2-check-fill"></i></div>
+            <div>
+                <h3>{{ total_exams }}</h3>
+                <p>Scheduled Exams</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card stat-green">
+            <div class="stat-card-icon"><i class="bi bi-door-open-fill"></i></div>
+            <div>
+                <h3>{{ total_rooms }}</h3>
+                <p>Exam Rooms</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card stat-pink">
+            <div class="stat-card-icon"><i class="bi bi-clipboard2-check-fill"></i></div>
+            <div>
+                <h3>{{ total_duties }}</h3>
+                <p>Duties Assigned</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row g-3 mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-lightning-fill me-2 text-warning"></i>Quick Actions</div>
+            <div class="card-body d-flex flex-wrap gap-2 py-3">
+                <a href="{% url 'faculty_add' %}" class="btn btn-primary"><i class="bi bi-person-plus-fill me-2"></i>Add Faculty</a>
+                <a href="{% url 'exam_add' %}" class="btn btn-outline-primary"><i class="bi bi-calendar-plus me-2"></i>Schedule Exam</a>
+                <a href="{% url 'room_add' %}" class="btn btn-outline-primary"><i class="bi bi-door-open me-2"></i>Add Room</a>
+                <a href="{% url 'duty_add' %}" class="btn btn-outline-primary"><i class="bi bi-clipboard2-plus me-2"></i>Assign Duty</a>
+                <a href="{% url 'auto_assign_duties' %}" class="btn btn-success"><i class="bi bi-magic me-2"></i>Auto Assign</a>
+                <a href="{% url 'send_notification' %}" class="btn btn-outline-primary"><i class="bi bi-bell me-2"></i>Send Notification</a>
+                <a href="{% url 'export_duties_csv' %}" class="btn btn-secondary"><i class="bi bi-download me-2"></i>Export CSV</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <!-- Upcoming Exams -->
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-calendar2-week-fill me-2" style="color:#6366f1"></i>Upcoming Exams</span>
+                <a href="{% url 'exam_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body p-0">
+                {% if upcoming_exams %}
+                <table class="table mb-0">
+                    <thead><tr><th>Subject</th><th>Date</th><th>Status</th></tr></thead>
+                    <tbody>
+                        {% for exam in upcoming_exams %}
+                        <tr>
+                            <td>
+                                <div style="font-weight:600; font-size:13px;">{{ exam.subject_name }}</div>
+                                <div style="font-size:11px; color:#9ca3af;">{{ exam.subject_code }} &middot; {{ exam.department }}</div>
+                            </td>
+                            <td><span style="font-size:12px; font-weight:600;">{{ exam.exam_date }}</span><br><span style="font-size:11px; color:#9ca3af;">{{ exam.start_time }} &ndash; {{ exam.end_time }}</span></td>
+                            <td><span class="badge badge-upcoming px-2 py-1">Upcoming</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state"><i class="bi bi-calendar-x d-block"></i>No upcoming exams</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Duties -->
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-clipboard2-check-fill me-2" style="color:#8b5cf6"></i>Recent Duties</span>
+                <a href="{% url 'duty_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body p-0">
+                {% if recent_duties %}
+                <table class="table mb-0">
+                    <thead><tr><th>Faculty</th><th>Exam</th><th>Status</th></tr></thead>
+                    <tbody>
+                        {% for duty in recent_duties %}
+                        <tr>
+                            <td>
+                                <div style="font-weight:600; font-size:13px;">{{ duty.faculty.name }}</div>
+                                <div style="font-size:11px; color:#9ca3af;">Room {{ duty.room.room_number }}</div>
+                            </td>
+                            <td><div style="font-size:12px; font-weight:600;">{{ duty.exam.subject_name }}</div><div style="font-size:11px; color:#9ca3af;">{{ duty.duty_date }}</div></td>
+                            <td>
+                                {% if duty.status == 'assigned' %}<span class="badge badge-assigned px-2 py-1">Assigned</span>
+                                {% elif duty.status == 'confirmed' %}<span class="badge badge-confirmed px-2 py-1">Confirmed</span>
+                                {% else %}<span class="badge badge-completed px-2 py-1">Completed</span>{% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state"><i class="bi bi-clipboard-x d-block"></i>No duties assigned yet</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

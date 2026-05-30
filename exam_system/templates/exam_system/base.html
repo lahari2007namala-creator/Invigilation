@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Examination Invigilation System{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --pastel-purple: #c9b8f0;
+            --pastel-blue: #b8d4f0;
+            --pastel-green: #b8f0d4;
+            --pastel-pink: #f0b8d4;
+            --pastel-yellow: #f0e8b8;
+            --pastel-peach: #f0cdb8;
+            --sidebar-bg: #1e1b4b;
+            --sidebar-text: #e0e7ff;
+            --sidebar-hover: #312e81;
+            --sidebar-active: #4f46e5;
+            --top-bar: #ffffff;
+            --card-shadow: 0 4px 20px rgba(0,0,0,0.07);
+            --radius: 16px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background: #f0f4ff;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            color: #1e1b4b;
+            margin: 0;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: 260px;
+            min-height: 100vh;
+            background: var(--sidebar-bg);
+            position: fixed;
+            top: 0; left: 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            transition: all .3s;
+        }
+
+        .sidebar-brand {
+            padding: 24px 20px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .sidebar-brand h5 {
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: .5px;
+            margin: 0;
+        }
+
+        .sidebar-brand p {
+            color: #a5b4fc;
+            font-size: 11px;
+            margin: 2px 0 0;
+        }
+
+        .sidebar-brand .brand-icon {
+            width: 42px; height: 42px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .sidebar-nav { padding: 12px 0; flex: 1; overflow-y: auto; }
+
+        .nav-section-title {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: #6366f1;
+            text-transform: uppercase;
+            padding: 14px 20px 6px;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            font-size: 14px;
+            border-radius: 0;
+            transition: all .2s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--sidebar-hover);
+            color: #fff;
+            border-left-color: #6366f1;
+        }
+
+        .sidebar-nav a.active {
+            background: var(--sidebar-active);
+            color: #fff;
+            border-left-color: #a5b4fc;
+            font-weight: 600;
+        }
+
+        .sidebar-nav a .bi { font-size: 16px; }
+
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .sidebar-footer a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #a5b4fc;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .sidebar-footer a:hover { color: #f87171; }
+
+        /* ── Main content ── */
+        .main-content {
+            margin-left: 260px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-bar {
+            background: var(--top-bar);
+            padding: 14px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #e8e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .top-bar h4 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 18px;
+            color: #1e1b4b;
+        }
+
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f0f4ff;
+            border-radius: 50px;
+            padding: 6px 14px 6px 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1e1b4b;
+        }
+
+        .user-avatar {
+            width: 30px; height: 30px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .notif-btn {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: #f0f4ff;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            text-decoration: none;
+            color: #1e1b4b;
+        }
+
+        .notif-btn .badge {
+            position: absolute;
+            top: -3px; right: -3px;
+            font-size: 9px;
+            min-width: 16px; height: 16px;
+        }
+
+        .page-body { padding: 28px; flex: 1; }
+
+        /* ── Cards ── */
+        .card {
+            border: none;
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            background: white;
+        }
+
+        .card-header {
+            background: transparent;
+            border-bottom: 1px solid #f0f0f8;
+            padding: 18px 22px 14px;
+            font-weight: 700;
+            font-size: 15px;
+            border-radius: var(--radius) var(--radius) 0 0 !important;
+        }
+
+        /* ── Stat Cards ── */
+        .stat-card {
+            border-radius: var(--radius);
+            padding: 22px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .stat-card-icon {
+            width: 56px; height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .stat-card h3 {
+            font-size: 28px;
+            font-weight: 800;
+            margin: 0 0 2px;
+            line-height: 1;
+        }
+
+        .stat-card p {
+            margin: 0;
+            font-size: 13px;
+            opacity: .7;
+            font-weight: 500;
+        }
+
+        .stat-purple { background: #ede9fe; }
+        .stat-purple .stat-card-icon { background: #c4b5fd; color: #6d28d9; }
+        .stat-purple h3 { color: #6d28d9; }
+
+        .stat-blue { background: #dbeafe; }
+        .stat-blue .stat-card-icon { background: #93c5fd; color: #1d4ed8; }
+        .stat-blue h3 { color: #1d4ed8; }
+
+        .stat-green { background: #d1fae5; }
+        .stat-green .stat-card-icon { background: #6ee7b7; color: #065f46; }
+        .stat-green h3 { color: #065f46; }
+
+        .stat-pink { background: #fce7f3; }
+        .stat-pink .stat-card-icon { background: #f9a8d4; color: #9d174d; }
+        .stat-pink h3 { color: #9d174d; }
+
+        .stat-peach { background: #ffedd5; }
+        .stat-peach .stat-card-icon { background: #fdba74; color: #c2410c; }
+        .stat-peach h3 { color: #c2410c; }
+
+        /* ── Badges ── */
+        .badge-upcoming { background: #dbeafe; color: #1d4ed8; }
+        .badge-ongoing  { background: #d1fae5; color: #065f46; }
+        .badge-completed{ background: #f3f4f6; color: #374151; }
+        .badge-assigned { background: #ede9fe; color: #6d28d9; }
+        .badge-confirmed{ background: #d1fae5; color: #065f46; }
+
+        /* ── Table ── */
+        .table { font-size: 14px; }
+        .table thead th {
+            background: #f8f7ff;
+            color: #4c4888;
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: .5px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #e8e4ff;
+            padding: 12px 16px;
+        }
+        .table tbody td {
+            padding: 13px 16px;
+            vertical-align: middle;
+            border-bottom: 1px solid #f5f3ff;
+        }
+        .table tbody tr:hover { background: #faf9ff; }
+
+        /* ── Buttons ── */
+        .btn-primary {
+            background: #6366f1;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            padding: 9px 20px;
+        }
+        .btn-primary:hover { background: #4f46e5; }
+
+        .btn-outline-primary {
+            border-color: #6366f1;
+            color: #6366f1;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        .btn-outline-primary:hover { background: #6366f1; color: white; }
+
+        .btn-danger { border-radius: 10px; font-weight: 600; background: #ef4444; border: none; }
+        .btn-success { border-radius: 10px; font-weight: 600; background: #10b981; border: none; }
+        .btn-warning { border-radius: 10px; font-weight: 600; }
+        .btn-secondary { border-radius: 10px; font-weight: 600; }
+        .btn-sm { padding: 5px 12px; font-size: 12px; }
+
+        /* ── Forms ── */
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 1.5px solid #e0dcff;
+            padding: 10px 14px;
+            font-size: 14px;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+        }
+        .form-label { font-weight: 600; font-size: 13px; color: #374151; margin-bottom: 5px; }
+
+        /* ── Alerts ── */
+        .alert { border-radius: 12px; border: none; font-size: 14px; font-weight: 500; }
+        .alert-success { background: #d1fae5; color: #065f46; }
+        .alert-danger  { background: #fee2e2; color: #991b1b; }
+        .alert-info    { background: #dbeafe; color: #1e40af; }
+        .alert-warning { background: #fef3c7; color: #92400e; }
+
+        /* ── Page header ── */
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .page-header h2 {
+            font-size: 22px;
+            font-weight: 800;
+            color: #1e1b4b;
+            margin: 0;
+        }
+
+        .page-header p {
+            color: #6b7280;
+            font-size: 13px;
+            margin: 3px 0 0;
+        }
+
+        /* ── Search bar ── */
+        .search-box {
+            position: relative;
+        }
+        .search-box .bi {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+        .search-box input {
+            padding-left: 36px;
+        }
+
+        /* ── Empty state ── */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9ca3af;
+        }
+
+        .empty-state .bi { font-size: 48px; margin-bottom: 16px; }
+
+        /* ── Notification dot ── */
+        .notif-item { border-left: 3px solid #6366f1; }
+        .notif-item.read { border-left-color: #e0dcff; opacity: .7; }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-260px); }
+            .main-content { margin-left: 0; }
+        }
+    </style>
+</head>
+<body>
+
+{% if user.is_authenticated %}
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="sidebar-brand">
+        <div class="brand-icon"><i class="bi bi-mortarboard-fill text-white fs-5"></i></div>
+        <h5>Invigilation System</h5>
+        <p>Exam Duty Management</p>
+    </div>
+
+    <div class="sidebar-nav">
+        {% if user.is_staff %}
+        <div class="nav-section-title">Overview</div>
+        <a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+            <i class="bi bi-grid-fill"></i> Dashboard
+        </a>
+
+        <div class="nav-section-title">Administration</div>
+        <a href="{% url 'faculty_list' %}" class="{% if 'faculty' in request.resolver_match.url_name %}active{% endif %}">
+            <i class="bi bi-people-fill"></i> Faculty
+        </a>
+        <a href="{% url 'department_list' %}" class="{% if 'department' in request.resolver_match.url_name %}active{% endif %}">
+            <i class="bi bi-building"></i> Departments
+        </a>
+
+        <div class="nav-section-title">Exam Scheduling</div>
+        <a href="{% url 'exam_list' %}" class="{% if 'exam' in request.resolver_match.url_name %}active{% endif %}">
+            <i class="bi bi-calendar2-check-fill"></i> Exams
+        </a>
+        <a href="{% url 'room_list' %}" class="{% if 'room' in request.resolver_match.url_name and 'allocation' not in request.resolver_match.url_name %}active{% endif %}">
+            <i class="bi bi-door-open-fill"></i> Rooms
+        </a>
+        <a href="{% url 'allocation_list' %}" class="{% if 'allocation' in request.resolver_match.url_name %}active{% endif %}">
+            <i class="bi bi-diagram-3-fill"></i> Room Allocations
+        </a>
+
+        <div class="nav-section-title">Invigilation</div>
+        <a href="{% url 'duty_list' %}" class="{% if 'duty' in request.resolver_match.url_name and 'auto' not in request.resolver_match.url_name and 'my' not in request.resolver_match.url_name %}active{% endif %}">
+            <i class="bi bi-clipboard2-check-fill"></i> Duties
+        </a>
+        <a href="{% url 'auto_assign_duties' %}" class="{% if request.resolver_match.url_name == 'auto_assign_duties' %}active{% endif %}">
+            <i class="bi bi-magic"></i> Auto Assign
+        </a>
+
+        <div class="nav-section-title">Communication</div>
+        <a href="{% url 'notification_list' %}" class="{% if 'notification' in request.resolver_match.url_name %}active{% endif %}">
+            <i class="bi bi-bell-fill"></i> Notifications
+        </a>
+        <a href="{% url 'reports' %}" class="{% if request.resolver_match.url_name == 'reports' %}active{% endif %}">
+            <i class="bi bi-bar-chart-fill"></i> Reports
+        </a>
+
+        {% else %}
+        <div class="nav-section-title">My Portal</div>
+        <a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+            <i class="bi bi-house-fill"></i> Dashboard
+        </a>
+        <a href="{% url 'my_duties' %}" class="{% if request.resolver_match.url_name == 'my_duties' %}active{% endif %}">
+            <i class="bi bi-clipboard2-check-fill"></i> My Duties
+        </a>
+        <a href="{% url 'my_notifications' %}" class="{% if request.resolver_match.url_name == 'my_notifications' %}active{% endif %}">
+            <i class="bi bi-bell-fill"></i> Notifications
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="sidebar-footer">
+        <a href="{% url 'logout' %}"><i class="bi bi-box-arrow-left"></i> Logout</a>
+    </div>
+</div>
+
+<!-- Main -->
+<div class="main-content">
+    <div class="top-bar">
+        <h4>{% block page_title %}Dashboard{% endblock %}</h4>
+        <div class="top-bar-right">
+            {% if user.is_staff %}
+            <a href="{% url 'notification_list' %}" class="notif-btn">
+                <i class="bi bi-bell"></i>
+            </a>
+            {% else %}
+            <a href="{% url 'my_notifications' %}" class="notif-btn">
+                <i class="bi bi-bell"></i>
+            </a>
+            {% endif %}
+            <div class="user-pill">
+                <div class="user-avatar">{{ user.username|first|upper }}</div>
+                {{ user.get_full_name|default:user.username }}
+                {% if user.is_staff %}<span class="badge bg-primary ms-1" style="font-size:10px">Admin</span>{% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="page-body">
+        {% if messages %}
+            {% for msg in messages %}
+            <div class="alert alert-{{ msg.tags }} alert-dismissible fade show mb-3" role="alert">
+                <i class="bi bi-{% if msg.tags == 'success' %}check-circle{% elif msg.tags == 'error' or msg.tags == 'danger' %}exclamation-circle{% else %}info-circle{% endif %}-fill me-2"></i>
+                {{ msg }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
+</div>
+
+{% else %}
+{% block auth_content %}{% endblock %}
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
