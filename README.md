@@ -1,5 +1,4 @@
 # 📋 Examination Invigilation Duty Allocator
-**By:** Lahari (2520090226) & Bhanu Priya (2520090171)
 
 ---
 
